@@ -32,7 +32,9 @@ export interface SearchBarProps {
   onFocus?: (input: any, container: any) => void;
   onBlur?: (input: any, container: any) => void;
   onCancel?: () => void;
-  renderCancelButton?: () => React.ReactNode;
+
+  // accessibility
+  accessibilityLabel?: string;
 
   // visibility
   showSearchIcon?: boolean;
@@ -45,7 +47,6 @@ export interface SearchBarProps {
   cancelTitle?: string;
   searchIcon?: ImageURISource;
   locateIcon?: ImageURISource;
-  cancelImage?: ImageURISource;
   onLocateButtonPress?: () => void;
 
   // input
@@ -60,9 +61,6 @@ export interface SearchBarProps {
   searchIconStyle?: StyleProp<ImageStyle>;
   locateIconStyle?: StyleProp<ImageStyle>;
   inputTextStyle?: StyleProp<TextStyle>;
-  cancelImageStyle?: StyleProp<ImageStyle>;
-  cancelImageBoxStyle?: StyleProp<ViewStyle>;
-  cancelContainerStyle?: StyleProp<ViewStyle>;
 
   cancelButtonWidth?: number;
   cancelButtonAlwaysVisible?: boolean;
@@ -134,6 +132,7 @@ export class SearchBar extends PureComponent<SearchBarProps, SearchBarState> {
 
   renderInput = () => {
     const {
+      accessibilityLabel,
       placeholder,
       clearButtonMode,
       searchIcon,
@@ -167,7 +166,9 @@ export class SearchBar extends PureComponent<SearchBarProps, SearchBarState> {
           onFocus={this.handleFocus}
           onBlur={this.handleBlur}
           returnKeyType='search'
-          accessibilityLabel={placeholder}
+          accessible={true}
+          accessibilityLabel={accessibilityLabel || 'search bar'}
+          // accessibilityRole={'search'}
           underlineColorAndroid='transparent'
           {...inputProps}
         />
@@ -202,6 +203,7 @@ export class SearchBar extends PureComponent<SearchBarProps, SearchBarState> {
       showRightBtnIcon,
       rightBtnIcon,
       onRightBtnPress,
+      onSubmit,
       rightBtnIconStyle,
       rightBtnStyle
     } = this.props;
@@ -212,12 +214,12 @@ export class SearchBar extends PureComponent<SearchBarProps, SearchBarState> {
 
     const icon = <Image source={rightBtnIcon} style={rightBtnIconStyle} resizeMode='contain' />;
 
-    if (!onRightBtnPress) {
+    if (!onRightBtnPress && !onSubmit) {
       return icon;
     }
 
     return (
-      <TouchableOpacity style={rightBtnStyle} onPress={onRightBtnPress}>
+      <TouchableOpacity style={rightBtnStyle} onPress={onRightBtnPress || this.handleSubmit}>
         {icon}
       </TouchableOpacity>
     );
@@ -308,45 +310,24 @@ export class SearchBar extends PureComponent<SearchBarProps, SearchBarState> {
   }
 
   renderCancelButton = () => {
-    const {
-      cancelContainerStyle,
-      cancelImage,
-      cancelImageBoxStyle,
-      cancelImageStyle,
-      cancelTitle,
-      cancelTitleStyle,
-      renderCancelButton
-    } = this.props;
-
+    const { cancelTitleStyle } = this.props;
     const { cancelButtonWidth } = this.state;
 
-    if (renderCancelButton) {
-      return renderCancelButton();
-    }
-
-    const viewStyle = cancelButtonWidth ? { width: cancelButtonWidth } : null;
-    // if cancelButtonWidth is defined, parent width is defined, so just fill all the space
-    const cancelStyle = cancelButtonWidth ? { flex: 1 } : { width: kCancelButtonWidthDefault };
-    const cancelImageBoxStyleInput = cancelImageBoxStyle ? cancelImageBoxStyle : null;
-    const touchableStyle = [S.rightButton, cancelStyle, cancelImageBoxStyleInput];
-
     return (
-      <Animated.View style={[viewStyle, cancelContainerStyle]}>
+      <Animated.View style={{ width: cancelButtonWidth }}>
         <TouchableOpacity
-          style={touchableStyle}
+          style={[
+            S.rightButton,
+            {
+              width: this.props.cancelButtonWidth || kCancelButtonWidthDefault
+            }
+          ]}
           onPress={this.handleCancel}
           accessibilityLabel='Cancel search'
         >
-          {cancelImage ? (
-            <Image
-              source={cancelImage}
-              style={cancelImageStyle}
-            />
-          ) : (
-            <Text style={cancelTitleStyle}>
-              {cancelTitle || 'Cancel'}
-            </Text>
-          )}
+          <Text style={cancelTitleStyle}>
+            {this.props.cancelTitle || 'Cancel'}
+          </Text>
         </TouchableOpacity>
       </Animated.View>
     );

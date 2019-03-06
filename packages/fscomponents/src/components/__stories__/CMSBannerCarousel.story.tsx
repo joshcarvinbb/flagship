@@ -14,8 +14,7 @@ const provider = new CoreContentManagementSystemProvider({
 });
 
 const defaultCarouselProps = {
-  height: 200,
-  showArrow: true
+  height: 200
 };
 
 storiesOf('CMSBannerCarousel', module)

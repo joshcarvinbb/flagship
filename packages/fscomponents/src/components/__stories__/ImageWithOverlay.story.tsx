@@ -11,6 +11,8 @@ import {
 } from '@storybook/addon-knobs/react';
 import { ImageWithOverlay } from '../ImageWithOverlay';
 
+const homeBanner = require('./assets/images/center.png');
+
 const defaultImageStyle = {
   width: 375,
   height: 200
@@ -28,13 +30,13 @@ const positions = [
   'topRight'
 ];
 
-const overlay = <Text style={{fontSize: 30, fontWeight: 'bold'}}>Text Overlay</Text>;
+const overlay = <Text>Overlay</Text>;
 
 storiesOf('ImageWithOverlay', module)
   .add('basic usage', () => (
     <ImageWithOverlay
       imageProps={{
-        source: { uri: 'https://placehold.it/375x150' },
+        source: homeBanner,
         style: defaultImageStyle
       }}
       overlay={overlay}

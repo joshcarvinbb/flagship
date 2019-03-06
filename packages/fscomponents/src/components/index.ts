@@ -54,7 +54,6 @@ export * from './Selector';
 export * from './ShareButton';
 export * from './Shelf';
 export * from './SingleLineForm';
-export * from './StatelessStepper';
 export * from './Step';
 export * from './StepIndicator';
 export * from './Stepper';

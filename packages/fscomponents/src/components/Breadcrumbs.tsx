@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { PureComponent } from 'react';
 import {
   StyleProp,
   StyleSheet,
@@ -72,33 +72,35 @@ const BreadcrumbsStyles = StyleSheet.create({
   }
 });
 
-export const Breadcrumbs = (props: BreadcrumbsProps): JSX.Element => {
-  const defaultProps: Partial<BreadcrumbsProps> = {
+export class Breadcrumbs extends PureComponent<BreadcrumbsProps> {
+  static defaultProps: Partial<BreadcrumbsProps> = {
     separator: BREADCRUMBS_SEPARATOR_DEFAULT
   };
-  const numItems = props.items.length;
 
-  return (
-    <View style={[BreadcrumbsStyles.container, props.style]}>
-      {props.items.map(
-        (item, index) => renderBreadcrumb(item, index, (index === numItems - 1))
-      )}
-    </View>
-  );
+  render(): JSX.Element {
+    const numItems = this.props.items.length;
 
+    return (
+      <View style={[BreadcrumbsStyles.container, this.props.style]}>
+        {this.props.items.map(
+          (item, index) => this.renderBreadcrumb(item, index, (index === numItems - 1))
+        )}
+      </View>
+    );
+  }
 
-  function renderBreadcrumb(item: Breadcrumb, index: number, isLast: boolean): JSX.Element {
+  private renderBreadcrumb(item: Breadcrumb, index: number, isLast: boolean): JSX.Element {
     let title: JSX.Element;
 
     if (item.onPress) {
       title = (
         <TouchableOpacityLink onPress={item.onPress} href={item.href}>
-          <Text style={[props.titleStyle, props.titleClickableStyle]}>{item.title}</Text>
+          <Text style={[this.props.titleStyle, this.props.titleClickableStyle]}>{item.title}</Text>
         </TouchableOpacityLink>
       );
     } else {
       title = (
-        <Text style={[props.titleStyle, props.titleDisabledStyle]}>{item.title}</Text>
+        <Text style={[this.props.titleStyle, this.props.titleDisabledStyle]}>{item.title}</Text>
       );
     }
 
@@ -107,17 +109,16 @@ export const Breadcrumbs = (props: BreadcrumbsProps): JSX.Element => {
         key={index}
         style={[
           BreadcrumbsStyles.breadcrumbContainer,
-          props.breadcrumbContainerStyle
+          this.props.breadcrumbContainerStyle
         ]}
       >
         {title}
-        {(props.showTrailingSeparator || !isLast) && (
-          <Text style={[BreadcrumbsStyles.separator, props.separatorStyle]}>
-            {props.separator ? props.separator : defaultProps.separator}
+        {(this.props.showTrailingSeparator || !isLast) && (
+          <Text style={[BreadcrumbsStyles.separator, this.props.separatorStyle]}>
+            {this.props.separator}
           </Text>
         )}
       </View>
     );
   }
-};
-
+}

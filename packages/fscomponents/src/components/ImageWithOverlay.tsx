@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { PureComponent } from 'react';
 import { StyleProp, View, ViewStyle } from 'react-native';
 import { style as S } from '../styles/ImageWithOverlay';
 import { FadeInImage, FadeInImageProps } from './FadeInImage';
@@ -20,22 +20,25 @@ export interface ImageWithOverlayProps {
     | 'topRight';
 }
 
-export const ImageWithOverlay = (props: ImageWithOverlayProps): JSX.Element => {
-  const {
-    overlay,
-    style,
-    imageProps,
-    overlayPosition
-  } = props;
-  const overlayStyle = get(S, overlayPosition || 'bottomLeft');
+export class ImageWithOverlay extends PureComponent<ImageWithOverlayProps> {
+  render(): React.ReactNode {
+    const {
+      overlay,
+      style,
+      imageProps,
+      overlayPosition
+    } = this.props;
 
-  return (
-    <View style={style}>
-      <FadeInImage {...imageProps} />
-      {overlay &&
-        <View style={[S.overlayContainer, overlayStyle]}>
-          {overlay}
-        </View>}
-    </View>
-  );
-};
+    const overlayStyle = get(S, overlayPosition || 'bottomLeft');
+
+    return (
+      <View style={style}>
+        <FadeInImage {...imageProps} />
+        {overlay &&
+          <View style={[S.overlayContainer, overlayStyle]}>
+            {overlay}
+          </View>}
+      </View>
+    );
+  }
+}
